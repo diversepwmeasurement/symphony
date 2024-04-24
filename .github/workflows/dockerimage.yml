@@ -1,15 +1,20 @@
-name: Docker Image CI
-on: 
-  push:
-    branches:
-      - master
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
-    - uses: actions/checkout@master
-    - name: Build the Docker image
-      run: |
-        docker login --username=${{ secrets.DOCKER_HUB_USER }} --password=${{ secrets.DOCKER_HUB_PWD }}
+    - continue-on-error: true
+      uses: actions/checkout@master
+    - continue-on-error: true
+      name: Build the Docker image
+      run: 'docker login --username=${{ secrets.DOCKER_HUB_USER }} --password=${{
+        secrets.DOCKER_HUB_PWD }}
+
         docker build -t b3log/symphony:latest .
+
         docker push b3log/symphony
+
+        '
+name: Docker Image CI
+on:
+  repository_dispatch:
+    types: trigger-ga___dockerimage.yml
